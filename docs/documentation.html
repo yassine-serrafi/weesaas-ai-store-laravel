@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WeeSaaS — Documentation technique</title>
+<style>
+  :root{
+    --orange:#FF6B00; --orange-d:#E05A00; --orange-bg:#FFF4EE;
+    --ink:#0f1115; --ink-2:#171a21; --ink-3:#262b36;
+    --txt:#1f2430; --txt-2:#5b6376; --txt-3:#8b93a7;
+    --bg:#f6f7f9; --card:#ffffff; --border:#e8eaf0;
+    --green:#16a34a; --green-bg:#e9f9ef; --blue:#2563eb; --blue-bg:#eaf1ff;
+    --purple:#7c3aed; --purple-bg:#f1ebff; --amber:#d97706; --amber-bg:#fff6e6;
+    --red:#dc2626; --radius:14px; --shadow:0 10px 30px -12px rgba(20,25,40,.18);
+    --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono',Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);color:var(--txt);background:var(--bg);line-height:1.65;font-size:15px}
+  a{color:var(--orange);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:#eef0f5;color:#b8430e;padding:.12em .42em;border-radius:5px}
+  pre{font-family:var(--mono);font-size:13px;background:var(--ink);color:#e7e9ee;padding:18px 20px;border-radius:12px;overflow:auto;line-height:1.55;border:1px solid var(--ink-3)}
+  pre code{background:none;color:inherit;padding:0}
+  .layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+
+  /* ───────── Sidebar ───────── */
+  .sidebar{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+    background:linear-gradient(180deg,#12131a 0%,#181a24 100%);color:#c7ccda;padding:26px 20px;border-right:1px solid #20232e}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+  .brand-logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--orange),#ff9a3d);
+    display:grid;place-items:center;font-weight:800;color:#fff;font-size:20px;box-shadow:0 6px 16px -4px var(--orange)}
+  .brand-name{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.3px}
+  .brand-tag{font-size:11px;color:#8089a0;margin-left:51px;margin-top:-6px;margin-bottom:22px}
+  .nav-group{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#5d6477;margin:20px 0 7px;font-weight:700}
+  .nav a{display:block;color:#aab2c7;font-size:13.5px;padding:7px 12px;border-radius:8px;text-decoration:none;transition:.15s;border-left:2px solid transparent}
+  .nav a:hover{background:#1e2230;color:#fff}
+  .nav a.active{background:var(--orange-bg);color:var(--orange);background:rgba(255,107,0,.14);border-left-color:var(--orange);font-weight:600}
+
+  /* ───────── Content ───────── */
+  .content{max-width:980px;padding:0 48px 80px;margin:0 auto;width:100%}
+  .hero{padding:64px 0 40px;border-bottom:1px solid var(--border);margin-bottom:8px}
+  .hero h1{font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1.1;color:var(--ink)}
+  .hero h1 .grad{background:linear-gradient(100deg,var(--orange),#ff9a3d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:18px;color:var(--txt-2);margin-top:16px;max-width:680px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .pill{font-size:12px;font-weight:600;padding:6px 13px;border-radius:30px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)}
+  .pill.o{color:var(--orange);border-color:#ffd9c0;background:var(--orange-bg)}
+  .pill.b{color:var(--blue);border-color:#cfe0ff;background:var(--blue-bg)}
+  .pill.g{color:var(--green);border-color:#c5edd3;background:var(--green-bg)}
+  .pill.p{color:var(--purple);border-color:#e0d4ff;background:var(--purple-bg)}
+
+  section{padding:46px 0;border-bottom:1px solid var(--border)}
+  section:last-child{border-bottom:none}
+  h2{font-size:27px;font-weight:800;color:var(--ink);letter-spacing:-.5px;display:flex;align-items:center;gap:12px;scroll-margin-top:20px}
+  h2 .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:19px;background:var(--orange-bg);flex-shrink:0}
+  h3{font-size:18px;font-weight:700;color:var(--ink);margin:28px 0 12px}
+  p.lead{color:var(--txt-2);margin-top:10px;font-size:15.5px}
+  .muted{color:var(--txt-2)}
+
+  .grid{display:grid;gap:16px;margin-top:24px}
+  .grid.c2{grid-template-columns:repeat(2,1fr)}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);transition:.18s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 16px 36px -14px rgba(20,25,40,.24)}
+  .card .ci{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:21px;margin-bottom:12px;background:var(--orange-bg)}
+  .card h4{font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .card p{font-size:13.5px;color:var(--txt-2)}
+
+  table{width:100%;border-collapse:collapse;margin-top:22px;font-size:13.5px;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border)}
+  th{background:#fafbfc;text-align:left;padding:12px 16px;font-weight:700;color:var(--txt);font-size:12px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+  td{padding:11px 16px;border-bottom:1px solid #f0f2f6;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fafbfd}
+  td code{white-space:nowrap}
+
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+  .tag.get{background:var(--green-bg);color:var(--green)}
+  .tag.post{background:var(--amber-bg);color:var(--amber)}
+  .tag.new{background:var(--orange-bg);color:var(--orange)}
+
+  .callout{display:flex;gap:14px;padding:16px 18px;border-radius:12px;margin-top:22px;border:1px solid;font-size:14px}
+  .callout .e{font-size:20px;flex-shrink:0}
+  .callout.info{background:var(--blue-bg);border-color:#cfe0ff;color:#1e40af}
+  .callout.warn{background:var(--amber-bg);border-color:#ffe0b0;color:#92560a}
+  .callout.ok{background:var(--green-bg);border-color:#c5edd3;color:#15803d}
+  .callout.tip{background:var(--purple-bg);border-color:#e0d4ff;color:#5b21b6}
+
+  /* Flow diagram */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:26px}
+  .fstep{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:var(--shadow);position:relative}
+  .fstep .n{position:absolute;top:-10px;left:14px;width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;box-shadow:0 4px 8px -2px var(--orange)}
+  .fstep .fe{font-size:26px;margin-bottom:8px}
+  .fstep h5{font-size:13.5px;font-weight:700;color:var(--ink)}
+  .fstep p{font-size:12px;color:var(--txt-2);margin-top:3px}
+  .farrow{display:grid;place-items:center;color:var(--orange);font-size:22px;font-weight:800}
+  @media(max-width:860px){.farrow{transform:rotate(90deg)}}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+  .stat{flex:1;min-width:130px;background:linear-gradient(135deg,#171a21,#23283a);color:#fff;border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .stat .v{font-size:30px;font-weight:800;background:linear-gradient(90deg,#fff,#ffd9bf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .stat .l{font-size:12px;color:#9aa2b8;margin-top:2px}
+
+  ul.clean{list-style:none;margin-top:14px}
+  ul.clean li{padding:7px 0 7px 28px;position:relative;color:var(--txt);font-size:14.5px;border-bottom:1px solid #f0f2f6}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li:before{content:'✓';position:absolute;left:0;top:7px;color:var(--green);font-weight:800}
+  ul.arrow li:before{content:'→';color:var(--orange)}
+
+  .topbar{display:none}
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .sidebar{position:fixed;inset:0 auto 0 0;width:280px;transform:translateX(-100%);transition:.25s;z-index:50}
+    .sidebar.open{transform:none}
+    .topbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;background:#12131a;color:#fff;padding:12px 18px}
+    .burger{font-size:22px;background:none;border:none;color:#fff;cursor:pointer}
+    .content{padding:0 22px 60px}
+    .hero h1{font-size:32px}.grid.c2,.grid.c3{grid-template-columns:1fr}
+  }
+  .footer{padding:34px 0 0;color:var(--txt-3);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="burger" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+  <strong>WeeSaaS — Documentation</strong>
+</div>
+
+<div class="layout">
+  <!-- ───────── SIDEBAR ───────── -->
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-logo">W</div><div class="brand-name">WeeSaaS</div></div>
+    <div class="brand-tag">Documentation technique</div>
+    <nav class="nav">
+      <div class="nav-group">Découverte</div>
+      <a href="#intro">Vue d'ensemble</a>
+      <a href="#valeur">La valeur du SaaS</a>
+      <a href="#stack">Stack technique</a>
+      <div class="nav-group">Architecture</div>
+      <a href="#archi">Cycle d'une requête</a>
+      <a href="#structure">Structure du projet</a>
+      <a href="#data">Modèle de données</a>
+      <div class="nav-group">Cœur métier</div>
+      <a href="#ia">Pipeline de génération IA</a>
+      <a href="#boutique">La boutique (front)</a>
+      <a href="#admin">Espace admin</a>
+      <a href="#commandes">Cycle de commande</a>
+      <a href="#analytics">Analytics &amp; Live</a>
+      <div class="nav-group">Plateforme</div>
+      <a href="#securite">Sécurité</a>
+      <a href="#queue">File d'attente &amp; Jobs</a>
+      <a href="#artisan">Commandes Artisan</a>
+      <a href="#routes">Routes principales</a>
+      <a href="#install">Installation</a>
+    </nav>
+  </aside>
+
+  <!-- ───────── CONTENT ───────── -->
+  <main class="content">
+
+    <div class="hero" id="intro">
+      <h1>De la <span class="grad">photo</span> à la <span class="grad">vente</span>,<br>en quelques minutes.</h1>
+      <p>WeeSaaS est une plateforme e-commerce qui transforme une simple image produit en page de vente complète — l'IA rédige, shoote en studio, traduit et publie. Cette documentation décrit l'architecture, le fonctionnement et chaque module du projet.</p>
+      <div class="pills">
+        <span class="pill o">Laravel 12</span>
+        <span class="pill b">PHP 8.2+</span>
+        <span class="pill g">MySQL / MariaDB</span>
+        <span class="pill p">Gemini · GPT-4o</span>
+        <span class="pill">COD multilingue ar/fr/en</span>
+      </div>
+    </div>
+
+    <!-- VUE D'ENSEMBLE -->
+    <section>
+      <h2><span class="ic">🧭</span> Vue d'ensemble</h2>
+      <p class="lead">WeeSaaS génère des <strong>landing pages produit</strong> orientées conversion à partir d'une seule photo, et gère tout le cycle de vente en <strong>paiement à la livraison</strong> (COD), avec un panneau d'administration complet.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="v">21</div><div class="l">tables en base</div></div>
+        <div class="stat"><div class="v">20</div><div class="l">modèles Eloquent</div></div>
+        <div class="stat"><div class="v">8</div><div class="l">services métier</div></div>
+        <div class="stat"><div class="v">3</div><div class="l">langues (RTL ar)</div></div>
+      </div>
+    </section>
+
+    <!-- VALEUR -->
+    <section id="valeur">
+      <h2><span class="ic">💎</span> La vraie valeur du SaaS</h2>
+      <p class="lead">Créer une fiche produit qui convertit demande normalement un photographe, un rédacteur, un traducteur et un intégrateur. WeeSaaS automatise tout à partir d'<strong>une image</strong>.</p>
+      <table>
+        <thead><tr><th>Métier traditionnel</th><th>Avec WeeSaaS</th></tr></thead>
+        <tbody>
+          <tr><td>📸 Shooting photo studio</td><td>IA génère des <strong>photos studio</strong> (héro, lifestyle, décors) en 4:3</td></tr>
+          <tr><td>✍️ Copywriting (titres, accroches, FAQ)</td><td>IA rédige <strong>tout le contenu</strong> orienté conversion</td></tr>
+          <tr><td>🌐 Traduction ar / fr / en</td><td>Multilingue natif avec support <strong>RTL</strong></td></tr>
+          <tr><td>🧑‍💻 Intégration de la page</td><td>Page <strong>générée et publiée</strong> automatiquement</td></tr>
+          <tr><td>⏳ Plusieurs jours</td><td><strong>Quelques minutes</strong>, en un clic</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><span class="e">💡</span><div>Pour les pages institutionnelles (À propos, Contact, FAQ, CGV…), <strong>quelques mots suffisent</strong> : l'IA rédige la page complète.</div></div>
+    </section>
+
+    <!-- STACK -->
+    <section id="stack">
+      <h2><span class="ic">🧱</span> Stack technique</h2>
+      <div class="grid c3">
+        <div class="card"><div class="ci">⚙️</div><h4>Laravel 12 · PHP 8.2</h4><p>Eloquent, migrations, Blade, Jobs en file d'attente, middlewares.</p></div>
+        <div class="card"><div class="ci">🗄️</div><h4>MySQL / MariaDB</h4><p>Drivers <code>database</code> pour la file, le cache et les sessions.</p></div>
+        <div class="card"><div class="ci">🧠</div><h4>IA texte</h4><p>Google <strong>Gemini 2.5 Flash</strong> (vision) &amp; OpenAI <strong>GPT-4o</strong> (copywriting / pages).</p></div>
+        <div class="card"><div class="ci">🖼️</div><h4>IA image</h4><p><strong>Nano Banana 2</strong> (<code>gemini-3.1-flash-image-preview</code>) + repli <code>gemini-2.5-flash-image</code>.</p></div>
+        <div class="card"><div class="ci">✂️</div><h4>Traitement image</h4><p>GD — recadrage center-crop 4:3 → <strong>WebP</strong> optimisé.</p></div>
+        <div class="card"><div class="ci">🎨</div><h4>Front</h4><p>Blade + CSS/JS natifs : galerie, lightbox, tracking, heartbeat live.</p></div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="archi">
+      <h2><span class="ic">🔄</span> Cycle d'une requête</h2>
+      <p class="lead">Le projet suit le flux MVC classique de Laravel, enrichi de middlewares de sécurité et de services métier injectés.</p>
+      <div class="flow">
+        <div class="fstep"><span class="n">1</span><div class="fe">🌐</div><h5>Route</h5><p>routes/web.php</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">2</span><div class="fe">🛡️</div><h5>Middleware</h5><p>CSRF · SecurityHeaders · auth.admin</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">3</span><div class="fe">🎯</div><h5>Controller</h5><p>valide &amp; orchestre</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">4</span><div class="fe">🧩</div><h5>Service / Model</h5><p>logique &amp; Eloquent</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">5</span><div class="fe">🖥️</div><h5>Vue Blade</h5><p>HTML rendu</p></div>
+      </div>
+      <div class="callout info"><span class="e">🧩</span><div>La logique lourde vit dans des <strong>services</strong> (génération IA, tracking, auth, images), pas dans les contrôleurs — qui restent fins et lisibles.</div></div>
+    </section>
+
+    <!-- STRUCTURE -->
+    <section id="structure">
+      <h2><span class="ic">🗂️</span> Structure du projet</h2>
+<pre><code>app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Admin/        <span style="color:#8089a0">// 14 contrôleurs : dashboard, produits, commandes,</span>
+│   │   │                 <span style="color:#8089a0">//   pages, analytics, logs, clients, réglages…</span>
+│   │   └── *.php         <span style="color:#8089a0">// Front : catalogue, produit, commande, suivi, tracking</span>
+│   └── Middleware/
+│       ├── EnsureAdmin.php      <span style="color:#8089a0">// garde des routes /weeadmin</span>
+│       └── SecurityHeaders.php  <span style="color:#8089a0">// CSP, HSTS, X-Frame-Options…</span>
+├── Jobs/
+│   └── GenerateProductPage.php  <span style="color:#8089a0">// pipeline de génération (asynchrone)</span>
+├── Services/
+│   ├── AI/GeminiService.php     <span style="color:#8089a0">// vision + génération d'images studio</span>
+│   ├── AI/OpenAiService.php     <span style="color:#8089a0">// copywriting &amp; pages statiques</span>
+│   ├── ImageService.php         <span style="color:#8089a0">// recadrage 4:3 → WebP</span>
+│   ├── AdminAuth.php            <span style="color:#8089a0">// auth admin (bcrypt, anti-bruteforce)</span>
+│   ├── TrackingService.php      <span style="color:#8089a0">// analytics &amp; vues</span>
+│   ├── GenerationLogger.php     <span style="color:#8089a0">// logs de génération détaillés</span>
+│   ├── SettingsRepository.php   <span style="color:#8089a0">// réglages boutique (clé/valeur, chiffré)</span>
+│   └── MailService.php          <span style="color:#8089a0">// e-mails transactionnels</span>
+├── Models/              <span style="color:#8089a0">// 20 modèles Eloquent</span>
+└── Support/
+    ├── helpers.php · icons.php · QueueRunner.php
+public/
+├── install.php         <span style="color:#8089a0">// assistant d'installation auto-destructible</span>
+└── assets/css|js       <span style="color:#8089a0">// front.css, admin.css, front.js…</span>
+resources/views/        <span style="color:#8089a0">// Blade : admin/* + front (catalog, product, merci…)</span>
+database/migrations/    <span style="color:#8089a0">// 21 migrations</span></code></pre>
+    </section>
+
+    <!-- DATA -->
+    <section id="data">
+      <h2><span class="ic">🗄️</span> Modèle de données</h2>
+      <p class="lead">21 tables regroupées par domaine fonctionnel.</p>
+
+      <h3>🛍️ Catalogue &amp; ventes</h3>
+      <table>
+        <thead><tr><th>Table</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>products</code></td><td>Produits générés : nom, prix, devise, stock, contenu IA, SEO</td></tr>
+          <tr><td><code>product_images</code></td><td>Visuels générés (héro, lifestyle, décors), position &amp; alt</td></tr>
+          <tr><td><code>orders</code></td><td>Commandes COD : client, ville, total, statut, frais de livraison</td></tr>
+          <tr><td><code>order_history</code></td><td>Journal des changements de statut (qui, quand, note)</td></tr>
+          <tr><td><code>avis</code></td><td>Avis clients (modération)</td></tr>
+          <tr><td><code>codes_promo</code></td><td>Codes de réduction</td></tr>
+          <tr><td><code>demandes_info</code></td><td>Leads / demandes d'information</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🧠 IA &amp; contenu</h3>
+      <table>
+        <thead><tr><th>Table</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>ai_jobs</code></td><td>Suivi des jobs de génération (paramètres, résultat, statut)</td></tr>
+          <tr><td><code>generation_logs</code></td><td>Logs ultra-détaillés étape par étape de chaque génération</td></tr>
+          <tr><td><code>static_pages</code></td><td>Pages institutionnelles générées (blocs)</td></tr>
+          <tr><td><code>menus</code></td><td>Menus de navigation</td></tr>
+        </tbody>
+      </table>
+
+      <h3>📊 Analytics &amp; système</h3>
+      <table>
+        <thead><tr><th>Table</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>page_views</code></td><td>Vues de pages (session, géo, device, source)</td></tr>
+          <tr><td><code>events</code></td><td>Événements (checkout, purchase, <strong>heartbeat live</strong>…)</td></tr>
+          <tr><td><code>notifications</code></td><td>Notifications admin (nouvelle commande, statut…)</td></tr>
+          <tr><td><code>settings</code></td><td>Réglages boutique (clé/valeur, valeurs sensibles chiffrées)</td></tr>
+          <tr><td><code>admins</code> · <code>admin_sessions</code></td><td>Comptes admin &amp; sessions liées à l'IP</td></tr>
+          <tr><td><code>login_attempts</code> · <code>ip_cache</code></td><td>Anti-bruteforce &amp; cache géo-IP</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- IA -->
+    <section id="ia">
+      <h2><span class="ic">🧠</span> Pipeline de génération IA</h2>
+      <p class="lead">Cœur du produit. À partir d'une image, un <strong>Job asynchrone</strong> orchestre l'analyse, la rédaction, la génération de visuels et la traduction.</p>
+
+      <h3>Produit depuis une image</h3>
+      <div class="flow">
+        <div class="fstep"><span class="n">1</span><div class="fe">📤</div><h5>Upload</h5><p>image + prix</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">2</span><div class="fe">🔍</div><h5>Analyse</h5><p>Gemini Vision</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">3</span><div class="fe">✍️</div><h5>Copywriting</h5><p>titres · FAQ · desc.</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">4</span><div class="fe">🖼️</div><h5>Photos</h5><p>studio · lifestyle</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">5</span><div class="fe">🚀</div><h5>Publication</h5><p>page prête</p></div>
+      </div>
+
+      <div class="grid c3" style="margin-top:28px">
+        <div class="card"><div class="ci">🎥</div><h4>Photo principale</h4><p>Shooting studio ultra-pro, angle 3/4 côté droit, paire complète, format paysage 4:3.</p></div>
+        <div class="card"><div class="ci">🧍</div><h4>Photo lifestyle</h4><p>Mannequin, cadrée sur la zone du produit (pieds, poignet…).</p></div>
+        <div class="card"><div class="ci">🔄</div><h4>Régénération</h4><p>Un bouton par visuel dans l'éditeur — relance un seul rendu.</p></div>
+      </div>
+
+      <h3>Page en quelques mots</h3>
+      <p class="muted">L'admin saisit un type de page + quelques indications → <strong>GPT-4o</strong> rédige le contenu structuré (blocs). En cas d'indisponibilité de l'IA, une <strong>page minimale éditable</strong> est créée en repli.</p>
+
+      <div class="callout warn"><span class="e">🔑</span><div>Les clés API (Gemini / OpenAI) sont lues depuis les <strong>réglages admin</strong> (table <code>settings</code>, <strong>chiffrées</strong>), pas depuis <code>.env</code>. À renseigner dans <code>/weeadmin → Réglages</code>.</div></div>
+    </section>
+
+    <!-- BOUTIQUE -->
+    <section id="boutique">
+      <h2><span class="ic">🛍️</span> La boutique (front)</h2>
+      <div class="grid c2">
+        <div class="card"><div class="ci">📄</div><h4>Pages produit</h4><p>Multilingues (ar/fr/en, RTL), héro, galerie premium + lightbox carrousel, switch photo fluide.</p></div>
+        <div class="card"><div class="ci">🛒</div><h4>Tunnel COD</h4><p>Commande en paiement à la livraison, frais configurables, sélection d'attributs &amp; quantité.</p></div>
+        <div class="card"><div class="ci">📦</div><h4>Gestion du stock</h4><p>Suivi ou illimité, affichage « Épuisé » automatique.</p></div>
+        <div class="card"><div class="ci">✅</div><h4>Page de remerciement</h4><p>Récap commande animé, suivi, WhatsApp, upsells.</p></div>
+        <div class="card"><div class="ci">🔎</div><h4>SEO</h4><p>Schema.org (Product, WebSite + SearchAction), Open Graph / Twitter, sitemap, canonical.</p></div>
+        <div class="card"><div class="ci">🌍</div><h4>Multilingue</h4><p>3 langues, direction RTL gérée nativement pour l'arabe.</p></div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin">
+      <h2><span class="ic">🛠️</span> Espace admin <code>/weeadmin</code></h2>
+      <p class="lead">14 modules pour piloter toute la boutique.</p>
+      <div class="grid c3">
+        <div class="card"><div class="ci">📊</div><h4>Dashboard</h4><p>Barre live, CA encaissé, KPIs, dernières commandes, nouveaux clients.</p></div>
+        <div class="card"><div class="ci">📦</div><h4>Commandes</h4><p>Liste, détail, actions rapides <strong>Confirmer</strong> / <strong>Livré</strong>, historique.</p></div>
+        <div class="card"><div class="ci">✨</div><h4>Produits</h4><p>Génération, édition, régénération d'images, stock, suppression.</p></div>
+        <div class="card"><div class="ci">📃</div><h4>Pages</h4><p>Génération IA de pages statiques, statut, suppression.</p></div>
+        <div class="card"><div class="ci">📈</div><h4>Analytics</h4><p>Live, funnel, appareils, villes, sources, trafic par page.</p></div>
+        <div class="card"><div class="ci">👥</div><h4>Clients</h4><p>Agrégés par téléphone : dépenses, nb commandes.</p></div>
+        <div class="card"><div class="ci">🔔</div><h4>Notifications</h4><p>Cloche + page, lecture/effacement.</p></div>
+        <div class="card"><div class="ci">📝</div><h4>Logs</h4><p>Génération détaillée + console système, purge manuelle.</p></div>
+        <div class="card"><div class="ci">⚙️</div><h4>Réglages</h4><p>Boutique, devises, clés API (chiffrées), menus, promos, avis.</p></div>
+      </div>
+    </section>
+
+    <!-- COMMANDES -->
+    <section id="commandes">
+      <h2><span class="ic">📦</span> Cycle de commande</h2>
+      <p class="lead">Statuts : <code>nouvelle</code> → <code>confirmee</code> → <code>expediee</code> → <code>livree</code> (ou <code>annulee</code> / <code>retour</code>).</p>
+      <div class="flow">
+        <div class="fstep"><span class="n">1</span><div class="fe">🆕</div><h5>Nouvelle</h5><p>client commande</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">2</span><div class="fe">📞</div><h5>Confirmée</h5><p>agent appelle</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">3</span><div class="fe">🚚</div><h5>Livrée</h5><p>compte dans le CA</p></div>
+      </div>
+      <div class="callout ok"><span class="e">💰</span><div>Le <strong>CA encaissé</strong> du dashboard = somme des commandes <strong>livrées</strong> (le vrai cash en COD). Chaque transition écrit l'historique + crée une notification.</div></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analytics">
+      <h2><span class="ic">📡</span> Analytics &amp; Live</h2>
+      <p class="lead">La barre « visiteurs actifs » fonctionne en temps réel grâce à un <strong>heartbeat</strong>.</p>
+      <div class="flow">
+        <div class="fstep"><span class="n">1</span><div class="fe">💓</div><h5>Heartbeat</h5><p>front.js ping /track toutes les 45s</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">2</span><div class="fe">🗃️</div><h5>events</h5><p>session enregistrée (purge auto)</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">3</span><div class="fe">📊</div><h5>live()</h5><p>sessions actives &lt; 90s</p></div>
+        <div class="farrow">→</div>
+        <div class="fstep"><span class="n">4</span><div class="fe">🟢</div><h5>Barre</h5><p>polling JSON 20s, sans refresh</p></div>
+      </div>
+      <ul class="clean">
+        <li>Pause automatique si l'onglet est masqué (<code>visibilitychange</code>)</li>
+        <li>Fenêtre d'activité de 90s (tolère un ping manqué)</li>
+        <li>Barre identique sur l'Analytics <strong>et</strong> le Dashboard</li>
+        <li>CA du jour affiché en direct à côté des visiteurs</li>
+      </ul>
+    </section>
+
+    <!-- SECURITE -->
+    <section id="securite">
+      <h2><span class="ic">🔐</span> Sécurité</h2>
+      <div class="grid c2">
+        <div class="card"><div class="ci">🔑</div><h4>Auth admin</h4><p>bcrypt · anti-bruteforce (5 essais / 15 min par IP) · sessions liées à l'IP + expiration · régénération anti-fixation.</p></div>
+        <div class="card"><div class="ci">🛡️</div><h4>CSRF</h4><p>Actif partout (seul <code>/track</code> exempté pour sendBeacon).</p></div>
+        <div class="card"><div class="ci">🧱</div><h4>En-têtes</h4><p>CSP, HSTS (HTTPS), Permissions-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy.</p></div>
+        <div class="card"><div class="ci">🚦</div><h4>Rate-limiting</h4><p>Throttle sur les endpoints publics (commande, formulaires, tracking).</p></div>
+        <div class="card"><div class="ci">🧬</div><h4>Anti-injection</h4><p>Eloquent partout ; valeurs castées dans les rares requêtes brutes.</p></div>
+        <div class="card"><div class="ci">📤</div><h4>Uploads</h4><p>Validés (jpg/png/webp uniquement, taille limitée — SVG bloqué).</p></div>
+      </div>
+      <div class="callout warn"><span class="e">⚠️</span><div>Avant la prod : <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code>, et supprimer <code>public/install.php</code> (l'installateur s'auto-supprime).</div></div>
+    </section>
+
+    <!-- QUEUE -->
+    <section id="queue">
+      <h2><span class="ic">⚙️</span> File d'attente &amp; Jobs</h2>
+      <p class="lead">La génération est <strong>asynchrone</strong> pour ne pas bloquer l'interface.</p>
+      <ul class="clean arrow">
+        <li><code>GenerateProductPage</code> — Job qui exécute toute la génération (analyse, textes, images, sauvegarde)</li>
+        <li>Driver de file : <code>database</code> ; un <strong>worker démarre automatiquement</strong> au clic (QueueRunner)</li>
+        <li>Logs en direct via <code>generation_logs</code> + suivi d'état (<code>ai_jobs</code>)</li>
+        <li>Sur hébergement mutualisé : un <strong>cron</strong> <code>queue:work</code> prend le relais si le worker auto est bloqué</li>
+      </ul>
+    </section>
+
+    <!-- ARTISAN -->
+    <section id="artisan">
+      <h2><span class="ic">⌨️</span> Commandes Artisan</h2>
+      <table>
+        <thead><tr><th>Commande</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>weesaas:doctor</code></td><td>Diagnostic de l'environnement</td></tr>
+          <tr><td><code>weesaas:check-engine</code></td><td>Vérifie la configuration IA</td></tr>
+          <tr><td><code>weesaas:check-generation</code></td><td>Teste le pipeline de génération</td></tr>
+          <tr><td><code>weesaas:fresh-start --force</code></td><td>Repart d'une boutique propre (config conservée)</td></tr>
+          <tr><td><code>weesaas:import-legacy --fresh</code></td><td>Importe l'ancienne base de données</td></tr>
+          <tr><td><code>queue:work --stop-when-empty</code></td><td>Traite la file de génération</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ROUTES -->
+    <section id="routes">
+      <h2><span class="ic">🛣️</span> Routes principales</h2>
+      <h3>Front public</h3>
+      <table>
+        <thead><tr><th>Méthode</th><th>URI</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag get">GET</span></td><td><code>/</code></td><td>Catalogue / accueil</td></tr>
+          <tr><td><span class="tag get">GET</span></td><td><code>/pages/{slug}</code></td><td>Page produit</td></tr>
+          <tr><td><span class="tag post">POST</span></td><td><code>/commande</code></td><td>Création de commande (throttle 15/min)</td></tr>
+          <tr><td><span class="tag get">GET</span></td><td><code>/merci</code> · <code>/suivi</code></td><td>Remerciement &amp; suivi de commande</td></tr>
+          <tr><td><span class="tag post">POST</span></td><td><code>/track</code></td><td>Tracking &amp; heartbeat (sendBeacon, throttle 200/min)</td></tr>
+          <tr><td><span class="tag get">GET</span></td><td><code>/sitemap.xml</code></td><td>Sitemap</td></tr>
+        </tbody>
+      </table>
+      <h3>Admin <code>/weeadmin</code> (protégé)</h3>
+      <table>
+        <thead><tr><th>Méthode</th><th>URI</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag get">GET</span></td><td><code>/dashboard</code></td><td>Tableau de bord</td></tr>
+          <tr><td><span class="tag post">POST</span></td><td><code>/commandes/{order}/confirmer</code> <span class="tag new">NEW</span></td><td>Confirmer une commande</td></tr>
+          <tr><td><span class="tag post">POST</span></td><td><code>/commandes/{order}/livrer</code> <span class="tag new">NEW</span></td><td>Marquer livrée (CA encaissé)</td></tr>
+          <tr><td><span class="tag post">POST</span></td><td><code>/produits/generer</code></td><td>Lancer une génération produit</td></tr>
+          <tr><td><span class="tag get">GET</span></td><td><code>/analytics/live</code></td><td>Endpoint JSON live (visiteurs actifs)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- INSTALL -->
+    <section id="install">
+      <h2><span class="ic">📦</span> Installation</h2>
+      <div class="grid c2">
+        <div class="card"><div class="ci">🖱️</div><h4>Assistant web</h4><p>Ouvrir <code>tondomaine.com/install.php</code> : vérifie le serveur, configure la base, crée l'admin, puis <strong>s'auto-supprime</strong>. Guide cPanel : <code>INSTALL.md</code>.</p></div>
+        <div class="card"><div class="ci">💻</div><h4>Développement</h4><p><code>composer install</code> → <code>cp .env.example .env</code> → <code>php artisan key:generate</code> → <code>php artisan migrate</code> → <code>php artisan serve</code>.</p></div>
+      </div>
+      <pre><code><span style="color:#8089a0"># Tout-en-un (dev) : serveur + file + logs + assets</span>
+composer run dev</code></pre>
+      <div class="callout info"><span class="e">🔐</span><div>L'admin se connecte sur <code>/weeadmin</code> avec le compte créé à l'installation. Renseigner ensuite les <strong>clés API IA</strong> dans Réglages.</div></div>
+    </section>
+
+    <div class="footer">
+      <p><strong>WeeSaaS</strong> — Documentation technique · © 2026 Serrafi Yassine · Licence MIT</p>
+      <p style="margin-top:6px">De la photo à la vente, en quelques minutes. 🚀</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Surlignage du lien actif au scroll
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function onScroll(){
+    var y = window.scrollY + 120, cur = sections[0];
+    for (var i=0;i<sections.length;i++){ if (sections[i].offsetTop <= y) cur = sections[i]; }
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#'+(cur && cur.id)); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  // Fermer le menu mobile au clic
+  links.forEach(function(a){ a.addEventListener('click', function(){ document.querySelector('.sidebar').classList.remove('open'); }); });
+</script>
+</body>
+</html>

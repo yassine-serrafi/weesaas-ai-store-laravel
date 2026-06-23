@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /weeadmin/
+Disallow: /commande
+Disallow: /track
+
+Sitemap: /sitemap.xml

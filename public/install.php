@@ -254,6 +254,9 @@ function handle_install(): void
         $tpl = env_set($tpl, 'DB_USERNAME', $data['db_user']);
         $tpl = env_set($tpl, 'DB_PASSWORD', $data['db_pass']);
         $tpl = env_set($tpl, 'WEESAAS_DEFAULT_LANG', $data['lang']);
+        // Clé de chiffrement des réglages sensibles : générée ALÉATOIREMENT et de
+        // façon UNIQUE à chaque installation (ne jamais garder le placeholder public).
+        $tpl = env_set($tpl, 'WEESAAS_LEGACY_ENCRYPTION_KEY', bin2hex(random_bytes(16)));
         if ($data['gemini'] !== '') {
             $tpl = env_set($tpl, 'GEMINI_API_KEY', $data['gemini']);
         }
